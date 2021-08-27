@@ -3,5 +3,5 @@ from apps.user import views
 from django.urls import path, include
 
 urlpatterns = [
-    path('center/', views.UserView.as_view()),
+    path('center', views.UserView.as_view()),
 ]
