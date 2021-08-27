@@ -1,0 +1,22 @@
+CREATE TABLE `user` (
+	`id` BIGINT ( 20 ) NOT NULL AUTO_INCREMENT COMMENT '用户id',
+	`uuid` BIGINT ( 20 ) NOT NULL COMMENT '用户uuid',
+	`username` VARCHAR ( 255 ) DEFAULT NULL COMMENT '用户名',
+	`avatar` varchar(255) DEFAULT NULL COMMENT '用户头像的url',
+	`password` VARCHAR ( 255 ) NOT NULL COMMENT '密码',
+	`phone` VARCHAR ( 11 ) NOT NULL COMMENT '手机号',
+	`email` VARCHAR ( 255 ) DEFAULT NULL COMMENT '邮箱',
+	`id_card` VARCHAR ( 255 ) DEFAULT NULL COMMENT '身份证',
+	`province` VARCHAR ( 50 ) DEFAULT NULL COMMENT '省',
+	`city` VARCHAR ( 50 ) DEFAULT NULL COMMENT '市',
+	`email_status` TINYINT ( 1 ) NOT NULL DEFAULT 0 COMMENT '邮箱状态: 0(未激活) 1(已激活)',
+	`real_status` TINYINT ( 1 ) NOT NULL DEFAULT 0 COMMENT '用户实名状态: 0(未实名) 1(已实名)',
+	`register_timestamp` BIGINT ( 20 ) DEFAULT NULL COMMENT '用户注册时间戳',
+	`real_timestamp` BIGINT ( 20 ) DEFAULT NULL COMMENT '用户实名时间戳',
+	`create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+	`update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录修改时间',
+	UNIQUE KEY `idx_user_uuid` ( `uuid` ),
+	UNIQUE KEY `idx_user_username` ( `username` ),
+	UNIQUE KEY `idx_user_phone` ( `phone` ),
+PRIMARY KEY ( `id` )
+) ENGINE = INNODB DEFAULT CHARSET = utf8 COMMENT = '用户表';
