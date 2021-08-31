@@ -12,12 +12,12 @@ class User(models.Model):
     id_card = models.CharField(max_length=255, blank=True, null=True)
     province = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True, null=True)
-    email_status = models.IntegerField()
-    real_status = models.IntegerField()
+    email_status = models.IntegerField(default=0)
+    real_status = models.IntegerField(default=0)
     register_timestamp = models.BigIntegerField(blank=True, null=True)
     real_timestamp = models.BigIntegerField(blank=True, null=True)
-    create_time = models.DateTimeField()
-    update_time = models.DateTimeField()
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
 
     class Meta:
         managed = False
