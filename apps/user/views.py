@@ -1,9 +1,12 @@
+import logging
 from django.views.generic import View
 from apps.user.models import User
 from common import utils
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import make_password
 from rest_framework.parsers import JSONParser
+
+logger = logging.getLogger('sanford')
 
 
 # /user/center
