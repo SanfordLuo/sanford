@@ -132,14 +132,17 @@ LOGGING = {
         },
     },
     'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        },  # 当 DEBUG 为 False 时生效
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
-        },  # 当 DEBUG 为 True 时生效
+        },
     },
     'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -148,28 +151,12 @@ LOGGING = {
             'backupCount': 10,
             'formatter': 'verbose'
         },
-        'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
     },
     'loggers': {
-        'sanford': {
+        'django': {
             'handlers': ['console', 'file'],
-            'level': 'INFO',
             'propagate': True,
-        },
-        'sanford.request': {
-            'handlers': ['console', 'file', 'mail_admins'],
             'level': 'INFO',
-            'propagate': False,
         },
     }
 }

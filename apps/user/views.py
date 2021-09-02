@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import make_password
 from rest_framework.parsers import JSONParser
 
-logger = logging.getLogger('sanford')
+logger = logging.getLogger('django')
 
 
 # /user/center
