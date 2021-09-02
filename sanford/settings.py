@@ -166,7 +166,7 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'django.request': {
+        'sanford.request': {
             'handlers': ['console', 'file', 'mail_admins'],
             'level': 'INFO',
             'propagate': False,
