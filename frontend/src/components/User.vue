@@ -3,7 +3,8 @@
     <el-row display="margin-top:10px">
       <el-input v-model="input" placeholder="请输入user_id"
                 style="display:inline-table; width: 30%; float:left"></el-input>
-      <el-button type="primary" @click="getUser()" style="float:left; margin: 2px;">查询</el-button>
+      <el-button type="primary" icon="el-icon-search" @click="getUser()" style="float:left; margin: 2px;">查询账户</el-button>
+      <el-button type="danger" disabled style="float:left; margin: 2px;">注销账户</el-button>
     </el-row>
     <el-row>
       <el-table :data="userInfo" style="width: 100%" border>
