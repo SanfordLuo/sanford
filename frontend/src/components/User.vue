@@ -38,6 +38,7 @@ export default {
           var res = JSON.parse(response.bodyText)
           console.log(res)
           if (res.is_succ === true) {
+            this.userInfo = []
             this.userInfo = this.userInfo.concat(res['data'])
           } else {
             this.$message.error('查询用户失败')
