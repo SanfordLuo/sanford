@@ -1,21 +1,64 @@
 <template>
   <div class="user">
-    <el-row display="margin-top:10px">
-      <el-input v-model="input" placeholder="请输入user_id"
-                style="display:inline-table; width: 30%; float:left"></el-input>
-      <el-button type="primary" icon="el-icon-search" @click="getUser()" style="float:left; margin: 2px;">查询账户</el-button>
-      <el-button type="danger" disabled style="float:left; margin: 2px;">注销账户</el-button>
-    </el-row>
-    <el-row>
-      <el-table :data="userInfo" style="width: 100%" border>
-        <el-table-column prop="uuid" label="账户" min-width="100">
-          <template slot-scope="scope"> {{ scope.row.uuid }}</template>
-        </el-table-column>
-        <el-table-column prop="username" label="用户名" min-width="100">
-          <template slot-scope="scope"> {{ scope.row.username }}</template>
-        </el-table-column>
-      </el-table>
-    </el-row>
+    <el-container>
+      <el-header>个人中心</el-header>
+      <el-container>
+        <el-aside width="400px">
+          <el-col :span="12">
+            <div class="sub-title"></div>
+            <div>
+              <div>
+                <el-avatar :size="100" :src="userInfo.avatar"></el-avatar>
+              </div>
+              <span>{{ userInfo.username }}</span>
+            </div>
+
+            <el-row>
+              <el-col :span="12">账号:</el-col>
+              <el-col :span="12">{{ userInfo.uuid }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">手机:</el-col>
+              <el-col :span="12">{{ userInfo.phone }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">邮箱:</el-col>
+              <el-col :span="12">{{ userInfo.email }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">身份证:</el-col>
+              <el-col :span="12">{{ userInfo.id_card }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">所在省:</el-col>
+              <el-col :span="12">{{ userInfo.province }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">所在市:</el-col>
+              <el-col :span="12">{{ userInfo.city }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">邮箱状态:</el-col>
+              <el-col :span="12">{{ userInfo.email_status }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">用户状态:</el-col>
+              <el-col :span="12">{{ userInfo.real_status }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">注册时间:</el-col>
+              <el-col :span="12">{{ userInfo.register_time }}</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">认证时间:</el-col>
+              <el-col :span="12">{{ userInfo.real_time }}</el-col>
+            </el-row>
+
+          </el-col>
+        </el-aside>
+      </el-container>
+    </el-container>
+
   </div>
 </template>
 
@@ -25,7 +68,11 @@ export default {
   data() {
     return {
       input: '',
-      userInfo: []
+      userInfo: {},
+      default: {
+        'username': '网友',
+        'avatar': 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+      }
     }
   },
   mounted: function () {
@@ -33,40 +80,45 @@ export default {
   },
   methods: {
     getUser() {
-      this.$http.get('http://127.0.0.1:8000/user/center?user_id=' + this.input)
+      this.$http.get('http://127.0.0.1:8000/user/center?user_id=8')
         .then((response) => {
           var res = JSON.parse(response.bodyText)
           console.log(res)
           if (res.is_succ === true) {
-            this.userInfo = []
-            this.userInfo = this.userInfo.concat(res['data'])
+            this.userInfo = res['data']
+            if (this.userInfo.username == null) {
+              this.userInfo.username = this.default.username
+            }
+            if (this.userInfo.avatar == null) {
+              this.userInfo.avatar = this.default.avatar
+            }
+            if (this.userInfo.register_timestamp !== null) {
+              this.userInfo.register_time = this.timestampToTime(this.userInfo.register_timestamp)
+            }
+            if (this.userInfo.real_timestamp !== null) {
+              this.userInfo.real_time = this.timestampToTime(this.userInfo.real_timestamp)
+            }
           } else {
             this.$message.error('查询用户失败')
             console.log(res['message'])
           }
         })
+    },
+
+    timestampToTime(timestamp) {
+      var date = new Date(timestamp)
+      var Y = date.getFullYear() + '-';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+      var h = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+      var m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+      var s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds());
+      return Y + M + D + h + m + s;
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>
