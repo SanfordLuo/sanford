@@ -26,10 +26,6 @@
               <el-col :span="12">{{ userInfo.email }}</el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">身份证:</el-col>
-              <el-col :span="12">{{ userInfo.id_card }}</el-col>
-            </el-row>
-            <el-row>
               <el-col :span="12">所在省:</el-col>
               <el-col :span="12">{{ userInfo.province }}</el-col>
             </el-row>
@@ -83,9 +79,8 @@ export default {
       this.$http.get('http://127.0.0.1:8000/user/center?user_id=8')
         .then((response) => {
           var res = JSON.parse(response.bodyText)
-          console.log(res)
           if (res.is_succ === true) {
-            this.userInfo = res['data']
+            this.userInfo = res.data
             if (this.userInfo.username == null) {
               this.userInfo.username = this.default.username
             }
@@ -99,8 +94,7 @@ export default {
               this.userInfo.real_time = this.timestampToTime(this.userInfo.real_timestamp)
             }
           } else {
-            this.$message.error('查询用户失败')
-            console.log(res['message'])
+            this.$message.error(res.message)
           }
         })
     },

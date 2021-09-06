@@ -32,7 +32,6 @@ class UserView(View):
             'avatar': user_info.avatar,
             'phone': user_info.phone,
             'email': user_info.email,
-            'id_card': user_info.id_card,
             'province': user_info.province,
             'city': user_info.city,
             'email_status': user_info.email_status,
