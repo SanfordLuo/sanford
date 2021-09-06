@@ -4,7 +4,7 @@
       <el-menu
         :default-active="this.$route.path"
         router mode="horizontal"
-        class="el-menu-vertical-demo"
+        class="el-menu-demo"
         @open="handleOpen"
         @close="handleClose"
         background-color="#fff"
