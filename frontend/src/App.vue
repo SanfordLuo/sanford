@@ -1,23 +1,53 @@
 <template>
-  <div id="app">
-<!--    <img src="./assets/logo.png">-->
+  <div>
+    <el-row :span="2">
+      <el-menu
+        :default-active="this.$route.path"
+        router mode="horizontal"
+        class="el-menu-demo"
+        @open="handleOpen"
+        @close="handleClose"
+        background-color="#fff"
+        text-color="#333"
+        active-text-color="#0084ff"
+        style="flex:1">
+        <el-menu-item v-for="(item,i) in navList" :key="i" :index="item.name">
+          <template slot="title">
+            <span> {{ item.navItem }}</span>
+          </template>
+
+        </el-menu-item>
+
+
+      </el-menu>
+    </el-row>
+
     <router-view/>
+
   </div>
 </template>
-
 <script>
 export default {
-  name: 'App'
+  data() {
+    return {
+      navList: [
+        {name: '/', navItem: '首页'},
+        {name: '/hot', navItem: '热榜'},
+        {name: '/user', navItem: '个人中心'},
+      ]
+    }
+  },
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
+    }
+  }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
