@@ -1,14 +1,14 @@
 <template>
-  <div class="news">
+  <div class="hot">
     <el-container>
-      <el-header>新闻页面</el-header>
+      <el-header>这是热榜</el-header>
     </el-container>
   </div>
 </template>
 
 <script>
 export default {
-  name: "News"
+  name: "Hot"
 }
 </script>
 

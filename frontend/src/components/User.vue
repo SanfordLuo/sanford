@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     getUser() {
-      this.$http.get('http://127.0.0.1:8000/user/center?user_id=8')
+      this.$http.get('http://127.0.0.1:8000/user/center?user_id=2')
         .then((response) => {
           var res = JSON.parse(response.bodyText)
           console.log(res)
