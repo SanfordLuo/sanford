@@ -79,6 +79,7 @@ export default {
       this.$http.get('http://127.0.0.1:8000/user/center?user_id=8')
         .then((response) => {
           var res = JSON.parse(response.bodyText)
+          console.log(res)
           if (res.is_succ === true) {
             this.userInfo = res.data
             if (this.userInfo.username == null) {
@@ -94,6 +95,7 @@ export default {
               this.userInfo.real_time = this.timestampToTime(this.userInfo.real_timestamp)
             }
           } else {
+            console.log(res.message)
             this.$message.error(res.message)
           }
         })
