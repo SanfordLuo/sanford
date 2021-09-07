@@ -1,16 +1,24 @@
 import logging
+from django.contrib import auth
 from django.views.generic import View
 from apps.user.models import User
 from common import utils
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 logger = logging.getLogger('django')
 
 
 # /user/center
-class UserView(View):
+class UserAPIView(APIView):
+    # authentication_classes = (TokenAuthentication,)  # token认证
+    # permission_classes = (IsAuthenticated,)   # IsAuthenticated 仅通过认证的用户
+    permission_classes = (AllowAny,)  # 允许所有用户
+
     def get(self, request):
         """
         用户的详细信息
