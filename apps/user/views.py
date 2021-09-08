@@ -9,49 +9,20 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import authentication_classes, permission_classes
+from common.rewrite import SanfordModelBackend, SanfordTokenAuthentication
 
 logger = logging.getLogger('django')
 
 
-# /user/center
-class UserAPIView(APIView):
-    # authentication_classes = (TokenAuthentication,)  # token认证
-    # permission_classes = (IsAuthenticated,)   # IsAuthenticated 仅通过认证的用户
-    permission_classes = (AllowAny,)  # 允许所有用户
-
-    def get(self, request):
-        """
-        用户的详细信息
-        :param request:
-        :return:
-        """
-        request = self.request.GET
-        user_id = request.get('user_id')
-
-        try:
-            user_info = User.objects.get(id=user_id)
-        except ObjectDoesNotExist:
-            return utils.json_response(message='用户不存在')
-
-        data = {
-            'user_id': user_info.id,
-            'uuid': user_info.uuid,
-            'username': user_info.username,
-            'avatar': user_info.avatar,
-            'phone': user_info.phone,
-            'email': user_info.email,
-            'province': user_info.province,
-            'city': user_info.city,
-            'email_status': user_info.email_status,
-            'real_status': user_info.real_status,
-            'register_timestamp': user_info.register_timestamp,
-            'real_timestamp': user_info.real_timestamp
-        }
-        return utils.json_response(is_succ=True, data=data)
+# /user/register
+class UserRegisterAPIView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         """
-        创建用户
+        注册用户
         :param request:
         :return:
         """
@@ -94,14 +65,96 @@ class UserAPIView(APIView):
         except Exception:
             return utils.json_response(message='注册失败,请稍后重试')
 
+
+# /user/login
+class UserLoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """
+        登录
+        :param request:
+        :return:
+        """
+        req_data = JSONParser().parse(request)
+        uuid = req_data.get('uuid')
+        password = req_data.get('password')
+
+        user = SanfordModelBackend.authenticate(request, uuid=uuid, password=password)
+        if user is None:
+            return utils.json_response(message='用户名或密码错误')
+        try:
+            token_info = Token.objects.get(user_id=user.id)
+        except ObjectDoesNotExist:
+            token_info = Token.objects.create(user=user)
+        token = token_info.key
+        return utils.json_response(is_succ=True, data={"token": token})
+
+
+# /user/logout
+class UserLogoutAPIView(APIView):
+    # authentication_classes = [SanfordTokenAuthentication]
+
+    def get(self, request):
+        """
+        退出登录
+        :param request:
+        :return:
+        """
+        is_succ = True
+        message = None
+
+        token_info = request.META.get('HTTP_AUTHORIZATION')
+        if token_info:
+            token = token_info.split()[1]
+            try:
+                Token.objects.get(key=token).delete()
+            except ObjectDoesNotExist:
+                is_succ = False
+                message = '退出登录失败'
+        return utils.json_response(is_succ=is_succ, message=message)
+
+
+# /user/center
+class UserCenterAPIView(APIView):
+
+    def get(self, request):
+        """
+        用户的详细信息
+        :param request:
+        :return:
+        """
+        user_id = utils.current_user(request)
+
+        try:
+            user_info = User.objects.get(id=user_id)
+        except ObjectDoesNotExist:
+            return utils.json_response(message='用户不存在')
+
+        data = {
+            'user_id': user_info.id,
+            'uuid': user_info.uuid,
+            'username': user_info.username,
+            'avatar': user_info.avatar,
+            'phone': user_info.phone,
+            'email': user_info.email,
+            'province': user_info.province,
+            'city': user_info.city,
+            'email_status': user_info.email_status,
+            'real_status': user_info.real_status,
+            'register_timestamp': user_info.register_timestamp,
+            'real_timestamp': user_info.real_timestamp
+        }
+        return utils.json_response(is_succ=True, data=data)
+
     def put(self, request):
         """
         修改用户信息
         :param request:
         :return:
         """
+        user_id = utils.current_user(request)
         req_data = JSONParser().parse(request)
-        user_id = req_data.get('user_id')
 
         try:
             User.objects.get(id=user_id)
@@ -130,8 +183,7 @@ class UserAPIView(APIView):
         :param request:
         :return:
         """
-        req_data = JSONParser().parse(request)
-        user_id = req_data.get('user_id')
+        user_id = utils.current_user(request)
 
         try:
             User.objects.get(id=user_id)

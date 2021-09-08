@@ -1,10 +1,11 @@
 import time
-import json
 import re
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
+from rest_framework.authtoken.models import Token
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_current_timestamp():
@@ -99,6 +100,22 @@ def valid_password(password):
     if not password.isalnum():
         return False
     return True
+
+
+def current_user(request):
+    """
+    通过token获取当前用户id
+    :return:
+    """
+    user_id = None
+    token_info = request.META.get('HTTP_AUTHORIZATION')
+    if token_info:
+        token = token_info.split()[1]
+        try:
+            user_id = Token.objects.get(key=token).user_id
+        except ObjectDoesNotExist:
+            user_id = None
+    return user_id
 
 
 if __name__ == '__main__':
