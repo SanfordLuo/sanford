@@ -23,21 +23,18 @@ export default new Router({
     {
       path: '/sanford',
       name: 'Sanford',
-      component: Sanford,
-      children: [
-        {
-          path: '/sanford/hot',
-          name: 'Hot',
-          component: Hot
-        },
-        {
-          path: '/sanford/user',
-          name: 'User',
-          component: User
-        },
-      ]
+      component: Sanford
     },
-
+    {
+      path: '/sanford/hot',
+      name: 'Hot',
+      component: Hot
+    },
+    {
+      path: '/sanford/user',
+      name: 'User',
+      component: User
+    },
     {
       path: '/sanford/login',
       name: 'Login',
