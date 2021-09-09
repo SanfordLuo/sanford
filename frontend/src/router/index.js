@@ -2,10 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Hot from '@/components/Hot'
-import User from '@/components/User'
-import Login from '@/components/Login'
-import Register from "@/components/Register"
 import Sanford from "@/components/Sanford"
+import UserCenter from '@/components/user/Center'
+import UserLogin from '@/components/user/Login'
+import UserRegister from "@/components/user/Register"
 
 Vue.use(Router)
 
@@ -27,26 +27,25 @@ export default new Router({
       children: [
         {
           path: '/sanford/hot',
-          name: 'Hot',
+          name: 'SanfordHot',
           component: Hot
         },
         {
-          path: '/sanford/user',
-          name: 'User',
-          component: User
+          path: '/sanford/user/center',
+          name: 'UserCenter',
+          component: UserCenter
         },
       ]
     },
-
     {
-      path: '/sanford/login',
-      name: 'Login',
-      component: Login
+      path: '/sanford/user/login',
+      name: 'UserLogin',
+      component: UserLogin
     },
     {
-      path: '/sanford/register',
-      name: 'Register',
-      component: Register
+      path: '/sanford/user/register',
+      name: 'UserRegister',
+      component: UserRegister
     },
   ],
   mode: "history",

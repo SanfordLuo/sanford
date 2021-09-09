@@ -34,7 +34,7 @@ export default {
     return {
       navList: [
         {name: '/sanford/hot', navItem: '热榜'},
-        {name: '/sanford/user', navItem: '个人中心'},
+        {name: '/sanford/user/center', navItem: '个人中心'},
       ]
     }
   },

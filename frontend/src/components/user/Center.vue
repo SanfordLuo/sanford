@@ -1,5 +1,5 @@
 <template>
-  <div class="user">
+  <div class="center">
     <el-container>
       <el-header>个人中心</el-header>
       <el-container>
@@ -60,7 +60,7 @@
 
 <script>
 export default {
-  name: "User",
+  name: "UserCenter",
   data() {
     return {
       input: '',

@@ -7,7 +7,7 @@
             <div class='title'>sanford</div>
           </el-col>
           <el-col :span="16" style="text-align: right; padding-right: 30px;">
-            <el-button plain size="medium" @click="goLogin()">登录</el-button>
+            <el-button plain size="medium" @click="userLogin()">登录</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -21,8 +21,8 @@
 export default {
   name: "Home",
   methods: {
-    goLogin() {
-      this.$router.replace('/sanford/login')
+    userLogin() {
+      this.$router.replace('/sanford/user/login')
     }
   }
 }
