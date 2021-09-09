@@ -55,7 +55,7 @@ export default {
             var res = response.data
             console.log(res);
             if (res.is_succ === true) {
-              this.$router.push({path: "/"});
+              this.$router.push({path: "/sanford"});
             } else {
               console.log(res.message)
               this.$message.error(res.message)

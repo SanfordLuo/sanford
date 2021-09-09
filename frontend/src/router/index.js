@@ -5,6 +5,7 @@ import Hot from '@/components/Hot'
 import User from '@/components/User'
 import Login from '@/components/Login'
 import Register from "@/components/Register"
+import Sanford from "@/components/Sanford"
 
 Vue.use(Router)
 
@@ -12,26 +13,35 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect: '/home'
+    },
+    {
+      path: '/home',
       name: 'Home',
       component: Home
     },
     {
-      path: '/hot',
+      path: '/sanford',
+      name: 'Sanford',
+      component: Sanford
+    },
+    {
+      path: '/sanford/hot',
       name: 'Hot',
       component: Hot
     },
     {
-      path: '/user',
+      path: '/sanford/user',
       name: 'User',
       component: User
     },
     {
-      path: '/login',
+      path: '/sanford/login',
       name: 'Login',
       component: Login
     },
     {
-      path: '/register',
+      path: '/sanford/register',
       name: 'Register',
       component: Register
     },
