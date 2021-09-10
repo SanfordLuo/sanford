@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "Hot"
+  name: "SanfordHot"
 }
 </script>
 
