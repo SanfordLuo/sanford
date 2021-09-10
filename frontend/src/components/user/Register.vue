@@ -5,9 +5,9 @@
         <el-form ref="registerForm" :model="user" :rules="rules" status-icon label-width="80px">
           <h3>注册</h3>
           <hr>
-<!--          <el-form-item prop="username" label="用户名">-->
-<!--            <el-input v-model="user.username" placeholder="请输入用户名(可选)" prefix-icon></el-input>-->
-<!--          </el-form-item>-->
+          <el-form-item prop="username" label="用户名">
+            <el-input v-model="user.username" placeholder="请输入用户名(可选)" prefix-icon></el-input>
+          </el-form-item>
           <el-form-item prop="phone" label="手机号">
             <el-input v-model="user.phone" placeholder="请输入手机号" prefix-icon></el-input>
           </el-form-item>
@@ -85,7 +85,7 @@ export default {
   /*background: url("../assets/images/register_bg.png") no-repeat;*/
   background-size: cover;
   width: 400px;
-  height: 300px;
+  height: 400px;
   margin: 215px auto;
   overflow: hidden;
   padding-top: 10px;

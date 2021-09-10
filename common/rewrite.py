@@ -8,6 +8,7 @@ from rest_framework import exceptions
 from apps.user.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import BaseAuthentication, TokenAuthentication
+from common import utils
 
 
 class SanfordModelBackend(ModelBackend):
@@ -17,15 +18,19 @@ class SanfordModelBackend(ModelBackend):
 
     def authenticate(self, uuid=None, password=None, **kwargs):
         """
-        原方法的 username 登录改为 uuid 登录
+        原方法的 username 登录改为 uuid 或者 phone 登录
         :param uuid:
         :param password:
         :param kwargs:
         :return:
         """
         if uuid and password:
+            if utils.valid_phone(uuid):
+                kwargs = {'phone': uuid}
+            else:
+                kwargs = {'uuid': uuid}
             try:
-                user = User.objects.get(uuid=uuid)
+                user = User.objects.get(**kwargs)
             except ObjectDoesNotExist:
                 user = None
             if user and user.check_password(password):

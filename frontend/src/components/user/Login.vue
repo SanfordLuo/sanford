@@ -6,7 +6,7 @@
           <h3>登录</h3>
           <hr>
           <el-form-item prop="uuid" label="账号">
-            <el-input v-model="user.uuid" placeholder="请输入账号" prefix-icon></el-input>
+            <el-input v-model="user.uuid" placeholder="请输入账号或手机号" prefix-icon></el-input>
           </el-form-item>
           <el-form-item id="password" prop="password" label="密码">
             <el-input v-model="user.password" show-password placeholder="请输入密码"></el-input>
