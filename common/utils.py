@@ -37,7 +37,7 @@ def json_response(is_succ=False, data=None, total=None, message=None):
     return JsonResponse(ret_dict)
 
 
-def make_uuid(length=9, allowed_chars='0123456789', uuid_type='int'):
+def make_uuid(length=8, allowed_chars='0123456789', uuid_type='int'):
     """
     生成uuid
     :param length:

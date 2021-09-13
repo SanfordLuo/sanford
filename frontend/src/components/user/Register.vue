@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
+import {MessageBox} from "element-ui";
 
 export default {
   name: "UserRegister",
@@ -59,7 +60,12 @@ export default {
             var res = response.data
             console.log(res);
             if (res.is_succ === true) {
-              this.$router.push({path: "/sanford/user/login"});
+              MessageBox.alert(res.data, "注册成功", {
+                confirmButtonText: "确认",
+                callback: action => {
+                  this.$router.push({path: "/sanford/user/login"});
+                }
+              });
             } else {
               console.log(res.message)
               this.$message.error(res.message)

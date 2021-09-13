@@ -55,6 +55,7 @@ export default {
             var res = response.data
             console.log(res);
             if (res.is_succ === true) {
+              this.$message.success("登录成功")
               this.$router.push({path: "/sanford"});
             } else {
               console.log(res.message)
