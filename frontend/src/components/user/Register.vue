@@ -27,6 +27,7 @@
 <script>
 import axios from "axios";
 import {MessageBox} from "element-ui";
+import config from "@/../static/config.json"
 
 export default {
   name: "UserRegister",
@@ -51,7 +52,7 @@ export default {
         return;
       } else {
         axios
-          .post('http://127.0.0.1:8000/sanford/user/register', {
+          .post(config.user_register_url, {
             username: this.user.username,
             phone: this.user.phone,
             password: this.user.password

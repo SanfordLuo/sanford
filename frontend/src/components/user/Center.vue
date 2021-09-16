@@ -62,6 +62,7 @@
 <script>
 import axios from "axios"
 import {MessageBox} from "element-ui";
+import config from "@/../static/config.json"
 
 export default {
   name: "UserCenter",
@@ -81,7 +82,7 @@ export default {
   methods: {
     getUser() {
       const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
-      axios.get('http://127.0.0.1:8000/sanford/user/center', {'headers': header})
+      axios.get(config.user_center_url, {'headers': header})
         .catch(error => {
           console.log(error.response)
           MessageBox.alert(error.response.data.detail, "前往登录", {

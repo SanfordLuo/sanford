@@ -24,6 +24,7 @@
 
 <script>
 import axios from "axios"
+import config from "@/../static/config.json"
 
 export default {
   name: "UserLogin",
@@ -47,7 +48,7 @@ export default {
         return;
       } else {
         axios
-          .post('http://127.0.0.1:8000/sanford/user/login', {
+          .post(config.user_login_url, {
             uuid: this.user.uuid,
             password: this.user.password
           })
