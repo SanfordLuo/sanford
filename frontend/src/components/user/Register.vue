@@ -51,7 +51,7 @@ export default {
         return;
       } else {
         axios
-          .post('http://127.0.0.1:8000/user/register', {
+          .post('http://127.0.0.1:8000/sanford/user/register', {
             username: this.user.username,
             phone: this.user.phone,
             password: this.user.password
