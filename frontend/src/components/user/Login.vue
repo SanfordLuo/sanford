@@ -40,10 +40,10 @@ export default {
   methods: {
     userLogin() {
       if (!this.user.uuid) {
-        this.$message.error("请输入账号！");
+        this.$message.error("请输入账号");
         return;
       } else if (!this.user.password) {
-        this.$message.error("请输入密码！");
+        this.$message.error("请输入密码");
         return;
       } else {
         axios
@@ -55,7 +55,8 @@ export default {
             var res = response.data
             console.log(res);
             if (res.is_succ === true) {
-              this.$message.success("登录成功")
+              localStorage.setItem("token", res.data.token);
+              this.$message.success("登录成功");
               this.$router.push({path: "/sanford"});
             } else {
               console.log(res.message)

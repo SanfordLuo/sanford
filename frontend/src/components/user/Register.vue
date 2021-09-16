@@ -44,10 +44,10 @@ export default {
   methods: {
     userRegister() {
       if (!this.user.phone) {
-        this.$message.error("请输入手机号！");
+        this.$message.error("请输入手机号");
         return;
       } else if (!this.user.password) {
-        this.$message.error("请输入密码！");
+        this.$message.error("请输入密码");
         return;
       } else {
         axios
