@@ -56,9 +56,14 @@
     </el-container>
 
   </div>
+
 </template>
 
 <script>
+import axios from "axios"
+import {MessageBox} from "element-ui";
+import config from "@/../static/config.json"
+
 export default {
   name: "UserCenter",
   data() {
@@ -76,10 +81,20 @@ export default {
   },
   methods: {
     getUser() {
-      this.$http.get('http://127.0.0.1:8000/user/center?user_id=2')
-        .then((response) => {
-          var res = JSON.parse(response.bodyText)
-          console.log(res)
+      const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
+      axios.get(config.user_center_url, {'headers': header})
+        .catch(error => {
+          console.log(error.response)
+          MessageBox.alert(error.response.data.detail, "前往登录", {
+            confirmButtonText: "确认",
+            callback: action => {
+              this.$router.push({path: "/sanford/user/login"});
+            }
+          });
+        })
+        .then(response => {
+          var res = response.data
+          console.log(res);
           if (res.is_succ === true) {
             this.userInfo = res.data
             if (this.userInfo.username == null) {

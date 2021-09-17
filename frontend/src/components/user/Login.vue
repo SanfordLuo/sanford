@@ -24,6 +24,7 @@
 
 <script>
 import axios from "axios"
+import config from "@/../static/config.json"
 
 export default {
   name: "UserLogin",
@@ -40,14 +41,14 @@ export default {
   methods: {
     userLogin() {
       if (!this.user.uuid) {
-        this.$message.error("请输入账号！");
+        this.$message.error("请输入账号");
         return;
       } else if (!this.user.password) {
-        this.$message.error("请输入密码！");
+        this.$message.error("请输入密码");
         return;
       } else {
         axios
-          .post('http://127.0.0.1:8000/user/login', {
+          .post(config.user_login_url, {
             uuid: this.user.uuid,
             password: this.user.password
           })
@@ -55,6 +56,8 @@ export default {
             var res = response.data
             console.log(res);
             if (res.is_succ === true) {
+              localStorage.setItem("token", res.data.token);
+              this.$message.success("登录成功");
               this.$router.push({path: "/sanford"});
             } else {
               console.log(res.message)

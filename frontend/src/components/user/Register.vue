@@ -25,7 +25,9 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
+import {MessageBox} from "element-ui";
+import config from "@/../static/config.json"
 
 export default {
   name: "UserRegister",
@@ -43,14 +45,14 @@ export default {
   methods: {
     userRegister() {
       if (!this.user.phone) {
-        this.$message.error("请输入手机号！");
+        this.$message.error("请输入手机号");
         return;
       } else if (!this.user.password) {
-        this.$message.error("请输入密码！");
+        this.$message.error("请输入密码");
         return;
       } else {
         axios
-          .post('http://127.0.0.1:8000/user/register', {
+          .post(config.user_register_url, {
             username: this.user.username,
             phone: this.user.phone,
             password: this.user.password
@@ -59,7 +61,12 @@ export default {
             var res = response.data
             console.log(res);
             if (res.is_succ === true) {
-              this.$router.push({path: "/sanford/user/login"});
+              MessageBox.alert(res.data, "注册成功", {
+                confirmButtonText: "确认",
+                callback: action => {
+                  this.$router.push({path: "/sanford/user/login"});
+                }
+              });
             } else {
               console.log(res.message)
               this.$message.error(res.message)
