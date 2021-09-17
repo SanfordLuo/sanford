@@ -18,6 +18,10 @@
 
         </el-menu-item>
 
+        <el-header>
+          周杰伦
+        </el-header>
+
 
       </el-menu>
     </el-row>
@@ -50,5 +54,11 @@ export default {
 </script>
 
 <style scoped>
-
+.el-header {
+  text-align: right;
+  line-height: 60px;
+  color: #6495ED;
+  font-size: 15px;
+  font-weight: bold
+}
 </style>
