@@ -1,6 +1,6 @@
 <template>
-  <div class="home">
-    <el-container>
+  <div>
+    <el-row :span="2">
       <el-menu
         :default-active="this.$route.path"
         router mode="horizontal"
@@ -24,9 +24,9 @@
         </el-menu-item>
 
       </el-menu>
-      <el-main>这是主页</el-main>
-      <el-footer>&copy; 2021 Sanford</el-footer>
-    </el-container>
+    </el-row>
+
+    <el-footer>&copy; 2021 Sanford</el-footer>
 
     <router-view/>
 
@@ -60,12 +60,10 @@ export default {
 
 <style scoped>
 
-.home {
-  height: 100%;
-}
-
-.el-container {
-  height: 100%;
+.el-row {
+  position: fixed;
+  top: 0;
+  width: 100%
 }
 
 .el-footer {
@@ -73,11 +71,9 @@ export default {
   color: #ffc852;
   text-align: center;
   line-height: 60px;
-}
-
-.el-main {
-  color: #333;
-  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%
 }
 
 </style>
