@@ -14,7 +14,7 @@
           <el-form-item id="password" prop="password" label="密码">
             <el-input v-model="user.password" show-password placeholder="请输入密码"></el-input>
           </el-form-item>
-          <router-link to="/sanford/user/login">登录账号</router-link>
+          <router-link to="/home/login">登录账号</router-link>
           <el-form-item>
             <el-button type="primary" icon="el-icon-upload" @click="userRegister()">注 册</el-button>
           </el-form-item>
@@ -64,7 +64,7 @@ export default {
               MessageBox.alert(res.data, "注册成功", {
                 confirmButtonText: "确认",
                 callback: action => {
-                  this.$router.push({path: "/sanford/user/login"});
+                  this.$router.push({path: "/home/login"});
                 }
               });
             } else {
