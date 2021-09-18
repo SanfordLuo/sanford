@@ -1,28 +1,58 @@
 <template>
-  <div class="home">
-    <el-container>
-      <el-header>
-        <el-row>
-          <el-col :span="8">
-            <div class='title'>sanford</div>
-          </el-col>
-          <el-col :span="16" style="text-align: right; padding-right: 30px;">
-            <el-button plain size="medium" @click="userLogin()">登录</el-button>
-          </el-col>
-        </el-row>
-      </el-header>
-      <el-main>这是首页</el-main>
-      <el-footer>&copy; 2021 黯乡伦</el-footer>
-    </el-container>
+  <div>
+    <el-row :span="2">
+      <el-menu
+        :default-active="this.$route.path"
+        router mode="horizontal"
+        class="el-menu-demo"
+        @open="handleOpen"
+        @close="handleClose"
+        background-color="#fff"
+        text-color="#333"
+        active-text-color="#0084ff">
+
+        <el-menu-item v-for="(item,i) in leftNavList" :key="i" :index="item.name">
+          <template slot="title">
+            <span> {{ item.navItem }}</span>
+          </template>
+        </el-menu-item>
+
+        <el-menu-item v-for="(item,i) in rightNavList" :key="i" :index="item.name" style="float:right">
+          <template slot="title">
+            <span> {{ item.navItem }}</span>
+          </template>
+        </el-menu-item>
+
+      </el-menu>
+    </el-row>
+
+    <el-footer>&copy; 2021 Sanford</el-footer>
+
+    <router-view/>
+
   </div>
 </template>
 
 <script>
 export default {
   name: "Home",
+  data() {
+    return {
+      leftNavList: [
+        {name: '/', navItem: 'sanford'}
+      ],
+      rightNavList: [
+        {name: '/home/login', navItem: '登录'},
+        {name: '/home/register', navItem: '注册'},
+      ]
+    }
+  },
   methods: {
-    userLogin() {
-      this.$router.replace('/sanford/user/login')
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
     }
   }
 }
@@ -30,30 +60,10 @@ export default {
 
 <style scoped>
 
-.home {
-  height: 100%;
-}
-
-.title {
-  background-color: #1ec198;
-  width: 150px;
-  padding-left: 30px;
-}
-
-.el-container {
-  height: 100%;
-}
-
-.el-header {
-  height: 60px;
-  background-color: white;
-  line-height: 60px;
-  padding: 0 !important;
-}
-
-.el-header > span,
-.el-header .el-dropdown {
-  font-size: 18px;
+.el-row {
+  position: fixed;
+  top: 0;
+  width: 100%
 }
 
 .el-footer {
@@ -61,10 +71,9 @@ export default {
   color: #ffc852;
   text-align: center;
   line-height: 60px;
+  position: fixed;
+  bottom: 0;
+  width: 100%
 }
 
-.el-main {
-  color: #333;
-  text-align: center;
-}
 </style>

@@ -12,7 +12,7 @@
             <el-input v-model="user.password" show-password placeholder="请输入密码"></el-input>
           </el-form-item>
           <router-link to="/">找回密码</router-link>
-          <router-link to="/sanford/user/register">注册账号</router-link>
+          <router-link to="/home/register">注册账号</router-link>
           <el-form-item>
             <el-button type="primary" icon="el-icon-upload" @click="userLogin()">登 录</el-button>
           </el-form-item>
