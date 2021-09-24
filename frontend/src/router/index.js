@@ -5,12 +5,18 @@ import Hot from '@/components/Hot'
 import Sanford from "@/components/Sanford"
 import UserCenter from '@/components/user/Center'
 import UserLogin from '@/components/Login'
-import UserRegister from "@/components/Register"
+import UserRegister from '@/components/Register'
+import Test from '@/components/Test'
 
 Vue.use(Router)
 
 const router = new Router({
   routes: [
+    {
+      path: '/test',
+      name: 'Test',
+      component: Test,
+    },
     {
       path: '/',
       redirect: '/home'

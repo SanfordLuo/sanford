@@ -238,6 +238,7 @@ class UserCenterAPIView(APIView):
         :return:
         """
         data = {}
+        old_password = req_data.get('oldPassword')
         password = req_data.get('password')
         if password:
             if not utils.valid_password(password):
