@@ -19,7 +19,7 @@
         </el-menu-item>
 
         <el-header>
-          周杰伦
+          {{ username }}
         </el-header>
 
 
@@ -39,7 +39,8 @@ export default {
       navList: [
         {name: '/sanford/hot', navItem: '热榜'},
         {name: '/sanford/user/center', navItem: '个人中心'},
-      ]
+      ],
+      username: localStorage.getItem('username'),
     }
   },
   methods: {

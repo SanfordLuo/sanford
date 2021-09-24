@@ -64,7 +64,7 @@ export default {
               MessageBox.alert(res.data, "注册成功", {
                 confirmButtonText: "确认",
                 callback: action => {
-                  this.$router.push({path: "/home/login"});
+                  this.$router.push({path: "/sanford"});
                 }
               });
             } else {

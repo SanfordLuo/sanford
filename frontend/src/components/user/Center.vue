@@ -55,13 +55,17 @@
       </el-container>
     </el-container>
 
+    <el-container>
+      <el-button type="primary" icon="el-icon-edit" @click="updateUser()">修改资料</el-button>
+      <el-button type="primary" icon="el-icon-delete" @click="userLogout()">退出登录</el-button>
+    </el-container>
+
   </div>
 
 </template>
 
 <script>
 import axios from "axios"
-import {MessageBox} from "element-ui";
 import config from "@/../static/config.json"
 
 export default {
@@ -70,6 +74,9 @@ export default {
     return {
       input: '',
       userInfo: {},
+      newUserInfo: {
+        'put_type': 'basic'
+      },
       default: {
         'username': '网友',
         'avatar': 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
@@ -85,12 +92,7 @@ export default {
       axios.get(config.user_center_url, {'headers': header})
         .catch(error => {
           console.log(error.response)
-          MessageBox.alert(error.response.data.detail, "前往登录", {
-            confirmButtonText: "确认",
-            callback: action => {
-              this.$router.push({path: "/sanford/user/login"});
-            }
-          });
+          this.$message.error(error.message)
         })
         .then(response => {
           var res = response.data
@@ -114,6 +116,36 @@ export default {
             this.$message.error(res.message)
           }
         })
+    },
+
+    userLogout() {
+      const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
+      axios.get(config.user_logout_url, {'headers': header})
+        .catch(error => {
+          console.log(error.response)
+          localStorage.removeItem('token')
+          this.$message.success('已退出登录')
+          this.$router.push({path: "/sanford"});
+        })
+        .then(response => {
+          var res = response.data
+          console.log(res);
+          if (res.is_succ === true) {
+            localStorage.removeItem('token')
+            this.$message.success('已退出登录')
+            this.$router.push({path: "/sanford"});
+          } else {
+            console.log(res.message)
+            this.$message.error(res.message)
+          }
+        })
+    },
+
+    updateUser() {
+      const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
+      this.$set(this.newUserInfo, 'headers', header)
+      console.log(this.newUserInfo)
+      this.$message.success('资料修改成功')
     },
 
     timestampToTime(timestamp) {
