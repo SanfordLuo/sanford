@@ -5,12 +5,18 @@ import Hot from '@/components/Hot'
 import Sanford from "@/components/Sanford"
 import UserCenter from '@/components/user/Center'
 import UserLogin from '@/components/Login'
-import UserRegister from "@/components/Register"
+import UserRegister from '@/components/Register'
+import Test from '@/components/Test'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
+    {
+      path: '/test',
+      name: 'Test',
+      component: Test,
+    },
     {
       path: '/',
       redirect: '/home'
@@ -51,4 +57,26 @@ export default new Router({
     },
   ],
   mode: "history",
+})
+
+export default router
+
+router.beforeEach((to, from, next) => {
+  console.log(localStorage)
+  let token = localStorage.getItem('token');
+
+  if (token === null) {
+    localStorage.removeItem('username')
+    if (to.path === '/home' || to.path === '/home/login' || to.path === '/home/register') {
+      next();
+    } else {
+      next('/home')
+    }
+  } else {
+    if (to.path === '/home/login' || to.path === '/home/register') {
+      next('/sanford');
+    } else {
+      next();
+    }
+  }
 })

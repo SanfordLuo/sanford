@@ -57,6 +57,7 @@ export default {
             console.log(res);
             if (res.is_succ === true) {
               localStorage.setItem("token", res.data.token);
+              localStorage.setItem("username", res.data.username);
               this.$message.success("登录成功");
               this.$router.push({path: "/sanford"});
             } else {

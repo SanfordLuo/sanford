@@ -88,7 +88,8 @@ class UserLoginAPIView(APIView):
         except ObjectDoesNotExist:
             token_info = Token.objects.create(user=user)
         token = token_info.key
-        return utils.json_response(is_succ=True, data={"token": token})
+        username = user.username if user.username else user.uuid
+        return utils.json_response(is_succ=True, data={'token': token, 'username': username})
 
 
 # /user/logout
@@ -237,6 +238,7 @@ class UserCenterAPIView(APIView):
         :return:
         """
         data = {}
+        old_password = req_data.get('oldPassword')
         password = req_data.get('password')
         if password:
             if not utils.valid_password(password):
