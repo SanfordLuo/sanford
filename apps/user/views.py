@@ -240,6 +240,17 @@ class UserCenterAPIView(APIView):
         data = {}
         old_password = req_data.get('oldPassword')
         password = req_data.get('password')
+
+        if not old_password:
+            return utils.json_response(message='请输入旧密码')
+        if not password:
+            return utils.json_response(message='请输入密码')
+
+        try:
+            User.objects.get(id=user_id, password=make_password(old_password, 'password'))
+        except ObjectDoesNotExist:
+            return utils.json_response(message='旧密码不正确 重新输入')
+
         if password:
             if not utils.valid_password(password):
                 return utils.json_response(message='密码长度至少为8,必须包含数字字母,且只能包含数字字母,请输入正确格式的密码')

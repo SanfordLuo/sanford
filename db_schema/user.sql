@@ -13,6 +13,7 @@ CREATE TABLE `user` (
 	`real_status` TINYINT ( 1 ) NOT NULL DEFAULT 0 COMMENT '用户实名状态: 0(未实名) 1(已实名)',
 	`register_timestamp` BIGINT ( 20 ) DEFAULT NULL COMMENT '用户注册时间戳',
 	`real_timestamp` BIGINT ( 20 ) DEFAULT NULL COMMENT '用户实名时间戳',
+	`last_login_timestamp` BIGINT ( 20 ) DEFAULT NULL COMMENT '用户最后的在线时间戳',
 	`create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
 	`update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录修改时间',
 	UNIQUE KEY `idx_user_uuid` ( `uuid` ),

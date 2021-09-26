@@ -108,7 +108,9 @@ export default {
     return {
       input: '',
       userInfo: {},
-      newUserInfo: {},
+      newUserInfo: {
+        username: '',
+      },
       default: {
         'username': '网友',
         'avatar': 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
@@ -159,6 +161,7 @@ export default {
         .catch(error => {
           console.log(error.response)
           localStorage.removeItem('token')
+          localStorage.removeItem('username')
           this.$message.success('已退出登录')
           this.$router.push({path: "/sanford"});
         })
@@ -167,6 +170,7 @@ export default {
           console.log(res);
           if (res.is_succ === true) {
             localStorage.removeItem('token')
+            localStorage.removeItem('username')
             this.$message.success('已退出登录')
             this.$router.push({path: "/sanford"});
           } else {
@@ -177,12 +181,26 @@ export default {
     },
 
     updateUser(put_type) {
-      this.$set(this.newUserInfo, 'put_type', put_type)
+      const newUserInfo = this.newUserInfo
+      this.$set(newUserInfo, 'put_type', put_type)
       const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
-      this.$set(this.newUserInfo, 'headers', header)
-      console.log(this.newUserInfo)
-      this.$message.success('修改资料成功')
-      this.newUserInfo = {}
+      console.log(newUserInfo)
+      console.log(header)
+      axios
+        .put(config.user_center_url, newUserInfo, {'headers': header})
+        .then(response => {
+            var res = response.data
+            console.log(res);
+            if (res.is_succ === true) {
+              this.refresh(newUserInfo)
+              this.$message.success(res.message);
+            } else {
+              console.log(res.message)
+              this.$message.error(res.message)
+            }
+          }
+        )
+      this.newUserInfo = {'username': ''}
     },
 
     timestampToTime(timestamp) {
@@ -194,6 +212,14 @@ export default {
       var m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
       var s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds());
       return Y + M + D + h + m + s;
+    },
+
+    refresh(newUserInfo) {
+      console.log('newUserInfo', newUserInfo);
+      if (newUserInfo.username) {
+        localStorage.setItem("username", newUserInfo.username);
+      }
+      this.$router.go(0)
     }
   }
 }
