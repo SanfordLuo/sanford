@@ -158,7 +158,7 @@ class UserCenterAPIView(APIView):
         req_data = JSONParser().parse(request)
 
         try:
-            User.objects.get(id=user_id)
+            user_info = User.objects.get(id=user_id)
         except ObjectDoesNotExist:
             return utils.json_response(message='用户不存在')
 
@@ -166,15 +166,15 @@ class UserCenterAPIView(APIView):
         if put_type == 'basic':
             return self.basic(user_id, req_data)
         elif put_type == 'password':
-            return self.password(user_id, req_data)
+            return self.password(user_info, req_data)
         elif put_type == 'phone':
-            return self.phone(user_id, req_data)
+            return self.phone(user_info, req_data)
         elif put_type == 'email':
-            return self.email(user_id, req_data)
+            return self.email(user_info, req_data)
         elif put_type == 'email_status':
-            return self.email_status(user_id, req_data)
+            return self.email_status(user_info, req_data)
         elif put_type == 'id_card':
-            return self.id_card(user_id, req_data)
+            return self.id_card(user_info, req_data)
         else:
             return utils.json_response(message='修改用户信息类型无效')
 
@@ -230,10 +230,10 @@ class UserCenterAPIView(APIView):
         return utils.json_response(is_succ=True, message='没有修改项')
 
     @staticmethod
-    def password(user_id, req_data):
+    def password(user_info, req_data):
         """
         修改密码
-        :param user_id:
+        :param user_info:
         :param req_data:
         :return:
         """
@@ -244,114 +244,128 @@ class UserCenterAPIView(APIView):
         if not old_password:
             return utils.json_response(message='请输入旧密码')
         if not password:
-            return utils.json_response(message='请输入密码')
+            return utils.json_response(message='请输入新密码')
 
-        try:
-            User.objects.get(id=user_id, password=make_password(old_password, 'password'))
-        except ObjectDoesNotExist:
+        if user_info.password != make_password(old_password, 'password'):
             return utils.json_response(message='旧密码不正确 重新输入')
 
-        if password:
-            if not utils.valid_password(password):
-                return utils.json_response(message='密码长度至少为8,必须包含数字字母,且只能包含数字字母,请输入正确格式的密码')
-            data['password'] = make_password(password, 'password')
+        if not utils.valid_password(password):
+            return utils.json_response(message='密码长度至少为8,必须包含数字字母,且只能包含数字字母,请输入正确格式的密码')
+        data['password'] = make_password(password, 'password')
 
-        if data:
-            try:
-                User.objects.filter(id=user_id).update(**data)
-                return utils.json_response(is_succ=True, message='修改密码成功')
-            except Exception:
-                return utils.json_response(message='修改密码失败')
-        return utils.json_response(is_succ=True, message='没有修改项')
+        try:
+            User.objects.filter(id=user_info.id).update(**data)
+            return utils.json_response(is_succ=True, message='修改密码成功')
+        except Exception:
+            return utils.json_response(message='修改密码失败')
 
     @staticmethod
-    def phone(user_id, req_data):
+    def phone(user_info, req_data):
         """
         修改手机号
-        :param user_id:
+        :param user_info:
         :param req_data:
         :return:
         """
         data = {}
+        old_phone = req_data.get('oldPhone')
         phone = req_data.get('phone')
-        if phone:
-            if not utils.valid_phone(phone):
-                return utils.json_response(message='请输入正确格式的手机号')
-            if User.objects.filter(phone=phone):
-                return utils.json_response(message='手机号已使用')
-            data['phone'] = phone
 
-        if data:
-            try:
-                User.objects.filter(id=user_id).update(**data)
-                return utils.json_response(is_succ=True, message='修改手机号成功')
-            except Exception:
-                return utils.json_response(message='修改手机号失败')
-        return utils.json_response(is_succ=True, message='没有修改项')
+        if not old_phone:
+            return utils.json_response(message='请输入旧手机号')
+        if not phone:
+            return utils.json_response(message='请输入新手机号')
+
+        if user_info.phone != old_phone:
+            return utils.json_response(message='旧手机号不正确 重新输入')
+
+        if not utils.valid_phone(phone):
+            return utils.json_response(message='请输入正确格式的手机号')
+        if User.objects.filter(phone=phone):
+            return utils.json_response(message='手机号已使用')
+        data['phone'] = phone
+
+        try:
+            User.objects.filter(id=user_info.id).update(**data)
+            return utils.json_response(is_succ=True, message='修改手机号成功')
+        except Exception:
+            return utils.json_response(message='修改手机号失败')
 
     @staticmethod
-    def email(user_id, req_data):
+    def email(user_info, req_data):
         """
         修改邮箱
-        :param user_id:
+        :param user_info:
         :param req_data:
         :return:
         """
         data = {}
+        old_email = req_data.get('oldEmail', '')
         email = req_data.get('email')
-        if email:
-            if not utils.valid_email(email):
-                return utils.json_response(message='请输入正确格式的邮箱')
-            if User.objects.filter(email=email):
-                return utils.json_response(message='邮箱已使用')
-            data['email'] = email
-            data['email_status'] = 0
 
-        if data:
-            try:
-                User.objects.filter(id=user_id).update(**data)
-                return utils.json_response(is_succ=True, message='修改邮箱成功')
-            except Exception:
-                return utils.json_response(message='修改邮箱失败')
-        return utils.json_response(is_succ=True, message='没有修改项')
+        if not email:
+            return utils.json_response(message='请输入新邮箱')
+
+        if old_email and user_info.email != old_email:
+            return utils.json_response(message='旧邮箱不正确 重新输入')
+
+        if not utils.valid_email(email):
+            return utils.json_response(message='请输入正确格式的邮箱')
+        if User.objects.filter(email=email):
+            return utils.json_response(message='邮箱已使用')
+        data['email'] = email
+
+        try:
+            User.objects.filter(id=user_info.id).update(**data)
+            return utils.json_response(is_succ=True, message='修改/添加 邮箱成功')
+        except Exception:
+            return utils.json_response(message='修改/添加 邮箱失败')
 
     @staticmethod
-    def email_status(user_id, req_data):
+    def email_status(user_info, req_data):
         """
         激活邮箱
-        :param user_id:
+        :param user_info:
         :param req_data:
         :return:
         """
+        if not user_info.email:
+            return utils.json_response(message='未绑定邮箱')
+        if user_info.email_status:
+            return utils.json_response(message='邮箱已激活')
+
         data = {'email_status': 1}
         try:
-            User.objects.filter(id=user_id).update(**data)
+            User.objects.filter(id=user_info.id).update(**data)
             return utils.json_response(is_succ=True, message='激活邮箱成功')
         except Exception:
             return utils.json_response(message='激活邮箱失败')
 
     @staticmethod
-    def id_card(user_id, req_data):
+    def id_card(user_info, req_data):
         """
         实名认证
-        :param user_id:
+        :param user_info:
         :param req_data:
         :return:
         """
-        data = {}
-        id_card = req_data.get('id_card')
-        if id_card:
-            id_card = make_password(id_card, 'id_card')
-            if User.objects.filter(id_card=id_card):
-                return utils.json_response(message='身份证已使用')
-            data['id_card'] = id_card
-            data['real_status'] = 1
-            data['real_timestamp'] = utils.get_current_timestamp()
+        if user_info.id_card and user_info.real_status:
+            return utils.json_response(message='已实名认证')
 
-        if data:
-            try:
-                User.objects.filter(id=user_id).update(**data)
-                return utils.json_response(is_succ=True, message='实名认证成功')
-            except Exception:
-                return utils.json_response(message='实名认证失败')
-        return utils.json_response(is_succ=True, message='没有修改项')
+        data = {}
+        id_card = req_data.get('idCard')
+        if not id_card:
+            return utils.json_response(message='请输入身份证')
+
+        id_card = make_password(id_card, 'id_card')
+        if User.objects.filter(id_card=id_card):
+            return utils.json_response(message='身份证已使用')
+        data['id_card'] = id_card
+        data['real_status'] = 1
+        data['real_timestamp'] = utils.get_current_timestamp()
+
+        try:
+            User.objects.filter(id=user_info.id).update(**data)
+            return utils.json_response(is_succ=True, message='实名认证成功')
+        except Exception:
+            return utils.json_response(message='实名认证失败')

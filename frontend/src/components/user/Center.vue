@@ -18,19 +18,19 @@
               <el-col :span="12">{{ userInfo.uuid }}</el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">手机:</el-col>
+              <el-col :span="12">手机号:</el-col>
               <el-col :span="12">{{ userInfo.phone }}</el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">邮箱:</el-col>
+              <el-col :span="12">邮箱号:</el-col>
               <el-col :span="12">{{ userInfo.email }}</el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">所在省:</el-col>
+              <el-col :span="12">所在省份:</el-col>
               <el-col :span="12">{{ userInfo.province }}</el-col>
             </el-row>
             <el-row>
-              <el-col :span="12">所在市:</el-col>
+              <el-col :span="12">所在市区:</el-col>
               <el-col :span="12">{{ userInfo.city }}</el-col>
             </el-row>
             <el-row>
@@ -70,8 +70,8 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisibleBasic = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisibleBasic = false, updateUser('basic')">确 定</el-button>
+          <el-button @click="dialogFormVisibleBasic = false, refresh(newUserInfo)">取 消</el-button>
+          <el-button type="primary" @click="updateUser('basic')">确 定</el-button>
         </div>
       </el-dialog>
 
@@ -79,15 +79,70 @@
       <el-dialog title="修改密码" :visible.sync="dialogFormVisiblePassword">
         <el-form :model="newUserInfo">
           <el-form-item label="旧密码" :label-width="formLabelWidth">
-            <el-input v-model="newUserInfo.oldPassword" auto-complete="off"></el-input>
+            <el-input v-model="newUserInfo.oldPassword" show-password auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="新密码" :label-width="formLabelWidth">
-            <el-input v-model="newUserInfo.password" auto-complete="off"></el-input>
+            <el-input v-model="newUserInfo.password" show-password auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisiblePassword = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisiblePassword = false, updateUser('password')">确 定</el-button>
+          <el-button type="primary" @click="updateUser('password')">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <el-button type="primary" icon="el-icon-edit" @click="dialogFormVisiblePhone = true">修改手机号</el-button>
+      <el-dialog title="修改手机号" :visible.sync="dialogFormVisiblePhone">
+        <el-form :model="newUserInfo">
+          <el-form-item label="旧手机号" :label-width="formLabelWidth">
+            <el-input v-model="newUserInfo.oldPhone" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="新手机号" :label-width="formLabelWidth">
+            <el-input v-model="newUserInfo.phone" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisiblePhone = false">取 消</el-button>
+          <el-button type="primary" @click="updateUser('phone')">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <el-button type="primary" icon="el-icon-edit" @click="dialogFormVisibleEmail = true">修改/添加 邮箱号</el-button>
+      <el-dialog title="修改/添加 邮箱号" :visible.sync="dialogFormVisibleEmail">
+        <el-form :model="newUserInfo">
+          <el-form-item label="旧邮箱号" :label-width="formLabelWidth">
+            <el-input v-model="newUserInfo.oldEmail" placeholder="仅修改邮箱时填" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="新邮箱号" :label-width="formLabelWidth">
+            <el-input v-model="newUserInfo.email" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisibleEmail = false">取 消</el-button>
+          <el-button type="primary" @click="updateUser('email')">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <el-button type="primary" icon="el-icon-edit" @click="dialogFormVisibleEmailStatus = true">激活邮箱</el-button>
+      <el-dialog title="激活邮箱" :visible.sync="dialogFormVisibleEmailStatus">
+        <el-main>确认激活邮件?</el-main>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisibleEmailStatus = false">取 消</el-button>
+          <el-button type="primary" @click="updateUser('email_status')">确 定
+          </el-button>
+        </div>
+      </el-dialog>
+
+      <el-button type="primary" icon="el-icon-edit" @click="dialogFormVisibleIdCard = true">实名认证</el-button>
+      <el-dialog title="实名认证" :visible.sync="dialogFormVisibleIdCard">
+        <el-form :model="newUserInfo">
+          <el-form-item label="身份证号" :label-width="formLabelWidth">
+            <el-input v-model="newUserInfo.idCard" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisibleIdCard = false">取 消</el-button>
+          <el-button type="primary" @click="updateUser('id_card')">确 定</el-button>
         </div>
       </el-dialog>
 
@@ -109,15 +164,17 @@ export default {
     return {
       input: '',
       userInfo: {},
-      newUserInfo: {
-        username: '',
-      },
+      newUserInfo: {},
       default: {
         'username': '网友',
         'avatar': 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
       },
       dialogFormVisibleBasic: false,
       dialogFormVisiblePassword: false,
+      dialogFormVisiblePhone: false,
+      dialogFormVisibleEmail: false,
+      dialogFormVisibleEmailStatus: false,
+      dialogFormVisibleIdCard: false,
       formLabelWidth: '120px'
     }
   },
@@ -201,7 +258,6 @@ export default {
             }
           }
         )
-      this.newUserInfo = {'username': ''}
     },
 
     timestampToTime(timestamp) {
@@ -216,6 +272,12 @@ export default {
     },
 
     refresh(newUserInfo) {
+      this.dialogFormVisibleBasic = false;
+      this.dialogFormVisiblePassword = false;
+      this.dialogFormVisiblePhone = false;
+      this.dialogFormVisibleEmail = false;
+      this.dialogFormVisibleEmailStatus = false;
+      this.dialogFormVisibleIdCard = false;
       if (newUserInfo.username) {
         localStorage.setItem("username", newUserInfo.username);
       }
