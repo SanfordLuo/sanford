@@ -103,6 +103,7 @@ import axios from "axios"
 import config from "@/../static/config.json"
 
 export default {
+  inject: ['reload'],
   name: "UserCenter",
   data() {
     return {
@@ -215,11 +216,10 @@ export default {
     },
 
     refresh(newUserInfo) {
-      console.log('newUserInfo', newUserInfo);
       if (newUserInfo.username) {
         localStorage.setItem("username", newUserInfo.username);
       }
-      this.$router.go(0)
+      this.reload()
     }
   }
 }
