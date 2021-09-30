@@ -7,6 +7,8 @@ import UserCenter from '@/components/user/Center'
 import UserLogin from '@/components/Login'
 import UserRegister from '@/components/Register'
 import Test from '@/components/Test'
+import Test1 from '@/components/UploadAvatarDemo'
+import Test2 from '@/components/UploadAvatar'
 
 Vue.use(Router)
 
@@ -16,6 +18,16 @@ const router = new Router({
       path: '/test',
       name: 'Test',
       component: Test,
+    },
+    {
+      path: '/test1',
+      name: 'Test1',
+      component: Test1,
+    },
+    {
+      path: '/test2',
+      name: 'Test2',
+      component: Test2,
     },
     {
       path: '/',
