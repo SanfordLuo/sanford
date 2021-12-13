@@ -5,7 +5,6 @@ from apps.user.models import User
 from common import utils
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import make_password, check_password
-from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -26,7 +25,7 @@ class UserRegisterAPIView(APIView):
         :param request:
         :return:
         """
-        req_data = JSONParser().parse(request)
+        req_data = request.data
 
         uuid = utils.make_uuid()
         username = req_data.get('username')
@@ -74,7 +73,7 @@ class UserLoginAPIView(APIView):
         :param request:
         :return:
         """
-        req_data = JSONParser().parse(request)
+        req_data = request.data
         uuid = req_data.get('uuid')
         password = req_data.get('password')
 
@@ -153,7 +152,7 @@ class UserCenterAPIView(APIView):
         :return:
         """
         user_id = utils.current_user(request)
-        req_data = JSONParser().parse(request)
+        req_data = request.data
 
         try:
             user_info = User.objects.get(id=user_id)
