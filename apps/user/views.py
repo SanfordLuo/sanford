@@ -5,7 +5,6 @@ from apps.user.models import User
 from common import utils
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.hashers import make_password, check_password
-from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -26,11 +25,10 @@ class UserRegisterAPIView(APIView):
         :param request:
         :return:
         """
-        req_data = JSONParser().parse(request)
+        req_data = request.data
 
         uuid = utils.make_uuid()
         username = req_data.get('username')
-        avatar = req_data.get('avatar')
         password = req_data.get('password')
         phone = req_data.get('phone')
 
@@ -53,7 +51,6 @@ class UserRegisterAPIView(APIView):
         data = {
             'uuid': uuid,
             'username': username,
-            'avatar': avatar,
             'password': make_password(password, 'password'),
             'phone': phone,
             'register_timestamp': utils.get_current_timestamp(),
@@ -76,7 +73,7 @@ class UserLoginAPIView(APIView):
         :param request:
         :return:
         """
-        req_data = JSONParser().parse(request)
+        req_data = request.data
         uuid = req_data.get('uuid')
         password = req_data.get('password')
 
@@ -155,7 +152,7 @@ class UserCenterAPIView(APIView):
         :return:
         """
         user_id = utils.current_user(request)
-        req_data = JSONParser().parse(request)
+        req_data = request.data
 
         try:
             user_info = User.objects.get(id=user_id)
@@ -164,17 +161,19 @@ class UserCenterAPIView(APIView):
 
         put_type = req_data.get('put_type')
         if put_type == 'basic':
-            return self.basic(user_id, req_data)
+            return self.update_basic(user_id, req_data)
         elif put_type == 'password':
-            return self.password(user_info, req_data)
+            return self.update_password(user_info, req_data)
         elif put_type == 'phone':
-            return self.phone(user_info, req_data)
+            return self.update_phone(user_info, req_data)
         elif put_type == 'email':
-            return self.email(user_info, req_data)
+            return self.update_email(user_info, req_data)
         elif put_type == 'email_status':
-            return self.email_status(user_info, req_data)
+            return self.update_email_status(user_info, req_data)
         elif put_type == 'id_card':
-            return self.id_card(user_info, req_data)
+            return self.update_id_card(user_info, req_data)
+        elif put_type == 'avatar':
+            return self.update_avatar(user_id, req_data)
         else:
             return utils.json_response(message='修改用户信息类型无效')
 
@@ -198,7 +197,7 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='注销账户失败')
 
     @staticmethod
-    def basic(user_id, req_data):
+    def update_basic(user_id, req_data):
         """
         修改用户基本信息
         :param user_id:
@@ -207,15 +206,12 @@ class UserCenterAPIView(APIView):
         """
         data = {}
         username = req_data.get('username')
-        avatar = req_data.get('avatar')
         province = req_data.get('province')
         city = req_data.get('city')
         if username:
             if User.objects.filter(username=username):
                 return utils.json_response(message='用户名重复')
             data['username'] = username
-        if avatar:
-            data['avatar'] = avatar
         if province:
             data['province'] = province
         if city:
@@ -230,7 +226,7 @@ class UserCenterAPIView(APIView):
         return utils.json_response(is_succ=True, message='没有修改项')
 
     @staticmethod
-    def password(user_info, req_data):
+    def update_password(user_info, req_data):
         """
         修改密码
         :param user_info:
@@ -260,7 +256,7 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='修改密码失败')
 
     @staticmethod
-    def phone(user_info, req_data):
+    def update_phone(user_info, req_data):
         """
         修改手机号
         :param user_info:
@@ -292,7 +288,7 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='修改手机号失败')
 
     @staticmethod
-    def email(user_info, req_data):
+    def update_email(user_info, req_data):
         """
         修改邮箱
         :param user_info:
@@ -322,7 +318,7 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='修改/添加 邮箱失败')
 
     @staticmethod
-    def email_status(user_info, req_data):
+    def update_email_status(user_info, req_data):
         """
         激活邮箱
         :param user_info:
@@ -342,7 +338,7 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='激活邮箱失败')
 
     @staticmethod
-    def id_card(user_info, req_data):
+    def update_id_card(user_info, req_data):
         """
         实名认证
         :param user_info:
@@ -369,3 +365,19 @@ class UserCenterAPIView(APIView):
             return utils.json_response(is_succ=True, message='实名认证成功')
         except Exception:
             return utils.json_response(message='实名认证失败')
+
+    @staticmethod
+    def update_avatar(user_id, req_data):
+        """
+        修改用户头像
+        :param user_id:
+        :param req_data:
+        :return:
+        """
+        data = {}
+        data['avatar'] = ''
+        try:
+            User.objects.filter(id=user_id).update(**data)
+            return utils.json_response(is_succ=True, message='修改头像成功')
+        except Exception:
+            return utils.json_response(message='修改头像失败')
