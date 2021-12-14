@@ -53,7 +53,7 @@ class UserRegisterAPIView(APIView):
             'username': username,
             'password': make_password(password, 'password'),
             'phone': phone,
-            'register_timestamp': utils.get_current_timestamp(),
+            'register_timestamp': utils.current_timestamp(),
         }
 
         try:
@@ -173,7 +173,7 @@ class UserCenterAPIView(APIView):
         elif put_type == 'id_card':
             return self.update_id_card(user_info, req_data)
         elif put_type == 'avatar':
-            return self.update_avatar(user_id, req_data)
+            return self.update_avatar(user_id, user_info, request.FILES.get('file'))
         else:
             return utils.json_response(message='修改用户信息类型无效')
 
@@ -358,7 +358,7 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='身份证已使用')
         data['id_card'] = id_card
         data['real_status'] = 1
-        data['real_timestamp'] = utils.get_current_timestamp()
+        data['real_timestamp'] = utils.current_timestamp()
 
         try:
             User.objects.filter(id=user_info.id).update(**data)
@@ -367,15 +367,21 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='实名认证失败')
 
     @staticmethod
-    def update_avatar(user_id, req_data):
+    def update_avatar(user_id, user_info, file):
         """
         修改用户头像
         :param user_id:
-        :param req_data:
+        :param user_info:
+        :param file:
         :return:
         """
-        data = {}
-        data['avatar'] = ''
+        if user_info.avatar:
+            last_time = user_info.avatar.split('-')[-1].split('.')[0]
+            now_timestamp = utils.current_timestamp()
+            if utils.turn_time_to_timestamp(last_time, fmt='%Y%m%d%H%M%S') + 60 * 60 * 2 > now_timestamp:
+                return utils.json_response(message='请两小时后再次进行修改')
+
+        data = {'avatar': utils.upload_img(user_id, file)}
         try:
             User.objects.filter(id=user_id).update(**data)
             return utils.json_response(is_succ=True, message='修改头像成功')

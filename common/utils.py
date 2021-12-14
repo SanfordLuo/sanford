@@ -1,27 +1,39 @@
 import time
+import datetime
 import re
+import io
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
+from qiniu import Auth, put_file, etag
+from PIL import Image
 
 
-def get_current_timestamp():
+def current_timestamp(ms=False):
     """
-    当前毫秒级时间戳
     :return:
     """
-    return int(time.time() * 1000)
+    if ms:
+        return int(time.time() * 1000)
+    return int(time.time())
 
 
-def json_response(is_succ=False, data=None, total=None, message=None):
+def current_time(fmt='%Y-%m-%d %H:%M:%S'):
+    return time.strftime(fmt, time.localtime())
+
+
+def turn_time_to_timestamp(timestr, fmt='%Y-%m-%d %H:%M:%S'):
+    return int(time.mktime(datetime.datetime.strptime(timestr, fmt).timetuple()))
+
+
+def json_response(is_succ=False, data=None, message=None):
     """
     格式化输出
     :param is_succ:
     :param data:
-    :param total:
     :param message:
     :return:
     """
@@ -30,8 +42,6 @@ def json_response(is_succ=False, data=None, total=None, message=None):
     }
     if data:
         ret_dict['data'] = data
-    if total:
-        ret_dict['total'] = total
     if message:
         ret_dict['message'] = message
     return JsonResponse(ret_dict)
@@ -118,5 +128,34 @@ def current_user(request):
     return user_id
 
 
+def upload_img(user_id, file):
+    """
+    上传图片到七牛云
+    :param user_id:
+    :param file:
+    :return:
+    """
+    img = file.read()
+    image = Image.open(io.BytesIO(img))
+
+    # 构建七牛云
+    q = Auth('4bialw-hER4uq285jLKC3fWnhjOhxvJo0SCjoErj', 'AyyguseqclyHe0gkFfZoslMTzAqAsX_DZNcbyZNr')
+    bucket_name = 'sanford00'
+    key = '{0}-{1}.{2}'.format(user_id, current_time(fmt='%Y%m%d%H%M%S'), image.format.lower())
+
+    file_path = './image/avatar/{0}'.format(key)
+    image = image.resize((400, 400), Image.ANTIALIAS)
+    image.save(file_path)
+
+    token = q.upload_token(bucket_name, key, 3600)
+    ret, info = put_file(token, key, file_path, version='v2')
+    img_url = 'http://r434tg1gi.hn-bkt.clouddn.com/{}'.format(key)
+
+    assert ret['key'] == key
+    assert ret['hash'] == etag(file_path)
+    return img_url
+
+
 if __name__ == '__main__':
-    print(valid_phone("17839194009"))
+    pass
+    # upload_img(2, 2)
