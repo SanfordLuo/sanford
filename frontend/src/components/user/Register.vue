@@ -1,20 +1,22 @@
 <template>
-  <div class="login" clearfix>
-    <div class="login-wrap">
+  <div class="register" clearfix>
+    <div class="register-wrap">
       <el-row type="flex" justify="center">
-        <el-form ref="loginForm" :model="user" :rules="rules" status-icon label-width="80px">
-          <h3>登录</h3>
+        <el-form ref="registerForm" :model="user" :rules="rules" status-icon label-width="80px">
+          <h3>注册</h3>
           <hr>
-          <el-form-item prop="uuid" label="账号">
-            <el-input v-model="user.uuid" placeholder="请输入账号或手机号" prefix-icon></el-input>
+          <el-form-item prop="username" label="用户名">
+            <el-input v-model="user.username" placeholder="请输入用户名(可选)" prefix-icon></el-input>
+          </el-form-item>
+          <el-form-item prop="phone" label="手机号">
+            <el-input v-model="user.phone" placeholder="请输入手机号" prefix-icon></el-input>
           </el-form-item>
           <el-form-item id="password" prop="password" label="密码">
             <el-input v-model="user.password" show-password placeholder="请输入密码"></el-input>
           </el-form-item>
-          <router-link to="/">找回密码</router-link>
-          <router-link to="/home/register">注册账号</router-link>
+          <router-link to="/home/login">登录账号</router-link>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-upload" @click="userLogin()">登 录</el-button>
+            <el-button type="primary" icon="el-icon-upload" @click="userRegister()">注 册</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -23,43 +25,48 @@
 </template>
 
 <script>
-import axios from "axios"
-import config from "@/../static/config.json"
+import axios from "axios";
+import {MessageBox} from "element-ui";
+import serviceUrl from "@/common/serviceUrl"
 
 export default {
-  name: "UserLogin",
+  name: "UserRegister",
   data() {
     return {
       user: {
-        uuid: "",
-        password: ""
+        username: null,
+        phone: null,
+        password: null
       }
     };
   },
   created() {
   },
   methods: {
-    userLogin() {
-      if (!this.user.uuid) {
-        this.$message.error("请输入账号");
+    userRegister() {
+      if (!this.user.phone) {
+        this.$message.error("请输入手机号");
         return;
       } else if (!this.user.password) {
         this.$message.error("请输入密码");
         return;
       } else {
         axios
-          .post(config.user_login_url, {
-            uuid: this.user.uuid,
+          .post(serviceUrl.userRegister, {
+            username: this.user.username,
+            phone: this.user.phone,
             password: this.user.password
           })
           .then(response => {
             var res = response.data
             console.log(res);
             if (res.is_succ === true) {
-              localStorage.setItem("token", res.data.token);
-              localStorage.setItem("username", res.data.username);
-              this.$message.success("登录成功");
-              this.$router.push({path: "/sanford"});
+              MessageBox.alert(res.data, "注册成功", {
+                confirmButtonText: "确认",
+                callback: action => {
+                  this.$router.push({path: "/sanford"});
+                }
+              });
             } else {
               console.log(res.message)
               this.$message.error(res.message)
@@ -73,7 +80,7 @@ export default {
 
 
 <style scoped>
-.login {
+.register {
   width: 100%;
   height: 740px;
   /*background: url("../assets/images/bg1.png") no-repeat;*/
@@ -81,11 +88,11 @@ export default {
   overflow: hidden;
 }
 
-.login-wrap {
-  /*background: url("../assets/images/login_bg.png") no-repeat;*/
+.register-wrap {
+  /*background: url("../assets/images/register_bg.png") no-repeat;*/
   background-size: cover;
   width: 400px;
-  height: 300px;
+  height: 400px;
   margin: 215px auto;
   overflow: hidden;
   padding-top: 10px;

@@ -155,7 +155,7 @@
 
 <script>
 import axios from "axios"
-import config from "@/../static/config.json"
+import serviceUrl from "@/common/serviceUrl"
 
 export default {
   inject: ['reload'],
@@ -184,7 +184,7 @@ export default {
   methods: {
     getUser() {
       const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
-      axios.get(config.user_center_url, {'headers': header})
+      axios.get(serviceUrl.userCenter, {'headers': header})
         .catch(error => {
           console.log(error.response)
           this.$message.error(error.message)
@@ -215,7 +215,7 @@ export default {
 
     userLogout() {
       const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
-      axios.get(config.user_logout_url, {'headers': header})
+      axios.get(serviceUrl.userLogout, {'headers': header})
         .catch(error => {
           console.log(error.response)
           localStorage.removeItem('token')
@@ -245,7 +245,7 @@ export default {
       console.log(newUserInfo)
       console.log(header)
       axios
-        .put(config.user_center_url, newUserInfo, {'headers': header})
+        .put(serviceUrl.userCenter, newUserInfo, {'headers': header})
         .then(response => {
             var res = response.data
             console.log(res);
