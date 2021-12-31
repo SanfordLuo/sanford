@@ -53,7 +53,7 @@ class UserRegisterAPIView(APIView):
             'username': username,
             'password': make_password(password, 'password'),
             'phone': phone,
-            'register_timestamp': utils.current_timestamp(),
+            'register_timestamp': utils.current_timestamp(ms=True),
         }
 
         try:
@@ -358,7 +358,7 @@ class UserCenterAPIView(APIView):
             return utils.json_response(message='身份证已使用')
         data['id_card'] = id_card
         data['real_status'] = 1
-        data['real_timestamp'] = utils.current_timestamp()
+        data['real_timestamp'] = utils.current_timestamp(ms=True)
 
         try:
             User.objects.filter(id=user_info.id).update(**data)

@@ -9,7 +9,48 @@
             <div>
               <div>
                 <el-avatar :size="100" :src="userInfo.avatar"></el-avatar>
+                <el-button type="text" title="注意！一旦上传则直接修改" onmouseover="" @click="uploadProfile = true">修改头像
+                </el-button>
               </div>
+              <el-dialog title="上传头像" width="420px" :visible.sync="uploadProfile"
+                         :before-close="beforeDialogClose">
+                <el-upload
+                  class="upload-demo"
+                  ref="upload"
+                  drag
+                  accept=".jpg,.jpeg,.png,.JPG,.JPEG"
+                  list-type="picture"
+                  :multiple="false"
+                  :auto-upload="false"
+                  action="no_use"
+                  :http-request="uploadUserAvatar"
+                  :before-upload="beforeAvatarUpload"
+                  :on-change="onchangeUpload"
+                >
+                  <i class="el-icon-upload"></i>
+                  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                  <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过2MB</div>
+                </el-upload>
+
+                <!-- 头像预览子弹窗 -->
+                <el-dialog width="30%" title="预览头像" :visible.sync="confirmProfile" append-to-body
+                           :before-close="beforeDialogClose">
+                  确认更改头像如下吗？<br>
+                  <div align="center">
+                    <el-image style="width: 200px; height: 200px" :src="previewImgURL" fit="cover"></el-image>
+                  </div>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="confirmCancel">换一个</el-button>
+                    <el-button type="primary" @click="confirmSubmit">确认</el-button>
+                  </div>
+                </el-dialog>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="cancelAvatarUpload">取 消</el-button>
+                  <!-- <el-button type="primary" @click="confirmProfile = true">打开内层 Dialog</el-button>-->
+                </div>
+              </el-dialog>
+
+
               <span>{{ userInfo.username }}</span>
             </div>
 
@@ -155,7 +196,7 @@
 
 <script>
 import axios from "axios"
-import config from "@/../static/config.json"
+import serviceUrl from "@/common/serviceUrl"
 
 export default {
   inject: ['reload'],
@@ -175,7 +216,10 @@ export default {
       dialogFormVisibleEmail: false,
       dialogFormVisibleEmailStatus: false,
       dialogFormVisibleIdCard: false,
-      formLabelWidth: '120px'
+      uploadProfile: false,
+      confirmProfile: false,
+      formLabelWidth: '120px',
+      previewImgURL: '',
     }
   },
   mounted: function () {
@@ -184,7 +228,7 @@ export default {
   methods: {
     getUser() {
       const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
-      axios.get(config.user_center_url, {'headers': header})
+      axios.get(serviceUrl.userCenter, {'headers': header})
         .catch(error => {
           console.log(error.response)
           this.$message.error(error.message)
@@ -215,7 +259,7 @@ export default {
 
     userLogout() {
       const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
-      axios.get(config.user_logout_url, {'headers': header})
+      axios.get(serviceUrl.userLogout, {'headers': header})
         .catch(error => {
           console.log(error.response)
           localStorage.removeItem('token')
@@ -245,7 +289,7 @@ export default {
       console.log(newUserInfo)
       console.log(header)
       axios
-        .put(config.user_center_url, newUserInfo, {'headers': header})
+        .put(serviceUrl.userCenter, newUserInfo, {'headers': header})
         .then(response => {
             var res = response.data
             console.log(res);
@@ -282,7 +326,73 @@ export default {
         localStorage.setItem("username", newUserInfo.username);
       }
       this.reload()
-    }
+    },
+
+    beforeDialogClose(done) { // 用户临时退出上传头像，应清空
+      this.$refs.upload.clearFiles()
+      done()
+    },
+
+    uploadUserAvatar(file) {
+      let userAvatarForm = new FormData
+      userAvatarForm.append('put_type', 'avatar')
+      userAvatarForm.append('file', file.file)
+      const header = {'Authorization': 'Token ' + localStorage.getItem('token')}
+      console.log(userAvatarForm)
+      console.log(header)
+      axios
+        .put(serviceUrl.userCenter, userAvatarForm, {'headers': header})
+        .then(response => {
+            var res = response.data
+            console.log(res);
+            if (res.is_succ === true) {
+              this.confirmProfile = false
+              this.uploadProfile = false
+              this.$refs.upload.clearFiles()
+              this.reload()
+              this.$message.success(res.message);
+            } else {
+              console.log(res.message)
+              this.$message.error(res.message)
+            }
+          }
+        )
+    },
+
+    beforeAvatarUpload(file) { // 大小限制
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      // this.previewImgURL = URL.createObjectURL(file.raw)
+      // this.confirmProfile = true // 预览图片
+      // alert('' + this.confirmProfile)
+      return isLt2M
+    },
+
+    onchangeUpload(file) {
+      // 预保存上传的图片
+      this.previewImgURL = URL.createObjectURL(file.raw)
+      this.confirmProfile = true // 预览图片
+    },
+
+    confirmCancel() {
+      this.confirmProfile = false
+      this.uploadProfile = true
+      this.previewImgURL = null
+      this.$refs.upload.clearFiles()
+    },
+
+    confirmSubmit() {
+      // post上传头像 存到数据库，显示在个人中心
+      this.$refs.upload.submit()
+    },
+
+    cancelAvatarUpload() { // 用户临时退出上传头像，应清空
+      this.uploadProfile = false
+      this.$refs.upload.clearFiles()
+    },
+
   }
 }
 </script>
